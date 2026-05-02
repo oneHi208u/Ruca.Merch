@@ -719,11 +719,11 @@
     <script>
         // ==================== CONFIGURACIÓN DE REGISTRO ====================
         // ⚠️ IMPORTANTE: Pegá aquí la URL de tu Google Apps Script (Web App)
-        const SHEET_SCRIPT_URL = 'PEGAR_AQUI_TU_URL_DE_APPS_SCRIPT';
+        const SHEET_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4DTL6wYmuyo0nSVlR33dtPCfeBs3FLsG4KHpzeKF_e2-Mo3QYRnFBzDTsTuJzTaIBYQ/exec';
 
         // Función para guardar registro en Google Sheets
         async function saveToSheet(orderData) {
-            if (SHEET_SCRIPT_URL === 'PEGAR_AQUI_TU_URL_DE_APPS_SCRIPT' || !SHEET_SCRIPT_URL) {
+            if (SHEET_SCRIPT_URL === 'https://script.google.com/macros/s/AKfycby4DTL6wYmuyo0nSVlR33dtPCfeBs3FLsG4KHpzeKF_e2-Mo3QYRnFBzDTsTuJzTaIBYQ/exec' || !SHEET_SCRIPT_URL) {
                 console.warn('No se configuró la URL del script. Los datos no se guardarán en la hoja.');
                 return;
             }
