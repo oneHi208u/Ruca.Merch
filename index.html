@@ -4,476 +4,1022 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Camisetas Ruca del Valle | Tienda Oficial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ==========================================
-           ESTÉTICA Y LÓGICA ORIGINAL (INTACTA)
-           ========================================== */
         :root {
-            --primary: #1a1a1a;
-            --secondary: #f5f5f5;
-            --accent: #25d366;
-            --text: #333;
-            --light-text: #666;
-            --border: #e0e0e0;
-            --success: #27ae60;
+            --gold: #F5B731;
+            --gold-dark: #C49000;
+            --gold-light: #FFD54F;
+            --black: #0A0A0A;
+            --dark: #121212;
+            --dark-gray: #1E1E1E;
+            --card-bg: #1A1A1A;
+            --cream: #FFF8E1;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-        body { background: var(--secondary); color: var(--text); line-height: 1.5; }
-        .reminder-banner { background: #fff3cd; color: #856404; padding: 12px 20px; text-align: center; border-bottom: 2px solid #ffeeba; display: none; }
-        .reminder-banner.show { display: block; }
-        .reminder-banner button { background: #000; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-left: 10px; font-weight: 500; }
-        header { background: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
-        h1 { font-size: 1.5rem; font-weight: 700; }
-        .subtitle { font-size: 0.9rem; color: var(--light-text); }
-        .cart-icon { background: var(--primary); color: #fff; padding: 10px 15px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; }
-        .cart-count { background: var(--success); color: #fff; font-size: 0.75rem; padding: 2px 6px; border-radius: 50%; }
-        .hero { text-align: center; padding: 60px 20px 40px; background: #fff; }
-        .hero h2 { font-size: 2rem; margin-bottom: 10px; }
-        .hero p { color: var(--light-text); margin-bottom: 15px; }
-        .stock-badge { display: inline-block; background: #e8f5e9; color: var(--success); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
         
-        .catalog { padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
-        .catalog h3 { font-size: 1.5rem; margin-bottom: 20px; text-align: center; }
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; }
-        .product-card { background: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.2s; }
-        .product-card:hover { transform: translateY(-5px); }
-        .product-img { width: 100%; height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; background: var(--secondary); }
-        .btn-buy { background: var(--primary); color: #fff; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 10px; }
-        .btn-buy:hover { opacity: 0.9; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; justify-content: center; align-items: center; padding: 20px; }
-        .modal.show { display: flex; }
-        .modal-content { background: #fff; padding: 25px; border-radius: 12px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; }
-        .close-modal { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--light-text); }
-        .size-table { width: 100%; border-collapse: collapse; margin: 15px 0; }
-        .size-table th, .size-table td { padding: 10px; border: 1px solid var(--border); text-align: center; }
-        .size-table th { background: var(--secondary); font-weight: 600; }
-        .cart-total { font-size: 1.25rem; font-weight: 700; margin: 15px 0; padding: 15px; background: var(--secondary); border-radius: 8px; text-align: center; }
-        .payment-options { display: grid; gap: 10px; margin: 15px 0; }
-        .payment-option { border: 2px solid var(--border); padding: 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
-        .payment-option.selected { border-color: var(--primary); background: #f0f0f0; }
-        .qr-box { text-align: center; margin: 20px 0; padding: 15px; background: var(--secondary); border-radius: 8px; }
-        .qr-placeholder { width: 180px; height: 180px; background: #fff; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; border: 2px dashed var(--border); border-radius: 8px; color: var(--light-text); font-size: 0.85rem; }
-        .alias-box { background: #fff; padding: 10px; border-radius: 6px; font-family: monospace; cursor: pointer; display: inline-block; margin: 5px 0; }
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #fff; padding: 12px 24px; border-radius: 8px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 300; }
-        .toast.show { opacity: 1; }
-        
-        footer { text-align: center; padding: 40px 20px; color: var(--light-text); font-size: 0.9rem; }
-        footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
-        
-        @media (max-width: 768px) {
-            header { flex-direction: column; gap: 10px; text-align: center; }
-            .products-grid { grid-template-columns: 1fr; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--black);
+            color: var(--cream);
+            overflow-x: hidden;
         }
 
-        /* ==========================================
-           NUEVO: ESTILOS PARA FUNCIONES AGREGADAS
-           ========================================== */
-        .models-section { padding: 40px 20px; background: #fff; margin: 20px 0; }
-        .models-section h3 { text-align: center; font-size: 1.5rem; margin-bottom: 25px; color: var(--primary); }
-        .models-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
-        .model-item { border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); background: var(--secondary); }
-        .model-item img, .model-item video { width: 100%; height: 350px; object-fit: cover; display: block; }
-        
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-weight: 600; margin-bottom: 6px; color: var(--text); font-size: 0.9rem; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
-        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
-        .form-note { font-size: 0.8rem; color: var(--light-text); margin-top: 4px; }
-        .number-warning { color: #e74c3c; font-size: 0.85rem; margin-top: 5px; display: none; }
-        .number-warning.show { display: block; }
-        .section-divider { border-top: 2px dashed var(--border); margin: 20px 0; padding-top: 15px; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: var(--black);
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .btn-gold:hover {
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(245, 183, 49, 0.35);
+        }
+        .btn-gold:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-outline-gold {
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            background: transparent;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        .btn-outline-gold:hover {
+            background: var(--gold);
+            color: var(--black);
+        }
+
+        .card-dark {
+            background: var(--card-bg);
+            border: 1px solid #2A2A2A;
+            transition: all 0.4s ease;
+        }
+        .card-dark:hover {
+            border-color: var(--gold);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(245, 183, 49, 0.12);
+        }
+
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+        }
+
+        .fade-in { animation: fadeIn 0.35s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.96) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .shimmer-text {
+            background: linear-gradient(90deg, var(--gold-dark), var(--gold-light), var(--gold-dark));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+        }
+
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .input-dark {
+            background: var(--dark-gray);
+            border: 1px solid #3A3A3A;
+            color: var(--cream);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .input-dark:focus {
+            border-color: var(--gold);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(245, 183, 49, 0.15);
+        }
+        .input-dark::placeholder { color: #666; }
+        select.input-dark option { background: var(--dark); color: var(--cream); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--dark); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold-dark); }
+
+        .toast-gold {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: var(--black);
+        }
+
+        .hero-bg {
+            background: 
+                radial-gradient(ellipse at 50% 0%, rgba(245, 183, 49, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(245, 183, 49, 0.04) 0%, transparent 50%),
+                var(--black);
+        }
+
+        .hero-grid-pattern {
+            background-image: 
+                linear-gradient(rgba(245,183,49,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(245,183,49,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .badge-stock {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: var(--black);
+        }
+
+        .section-tag {
+            background: rgba(245, 183, 49, 0.08);
+            border: 1px solid rgba(245, 183, 49, 0.2);
+            color: var(--gold);
+            transition: all 0.3s ease;
+        }
+        .section-tag:hover {
+            background: rgba(245, 183, 49, 0.15);
+            border-color: var(--gold);
+        }
+
+        .payment-option {
+            border: 2px solid #2A2A2A;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .payment-option:hover { border-color: var(--gold); }
+        .payment-option.selected {
+            border-color: var(--gold);
+            background: rgba(245, 183, 49, 0.06);
+        }
+
+        .cart-sidebar {
+            background: var(--dark);
+            border-left: 1px solid #2A2A2A;
+        }
+
+        .image-placeholder {
+            background: linear-gradient(135deg, #1E1E1E 0%, #2A2A2A 50%, #1E1E1E 100%);
+            background-size: 200% 200%;
+            animation: placeholderShimmer 2s ease-in-out infinite;
+        }
+        @keyframes placeholderShimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .model-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .model-card .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.8) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .model-card:hover .overlay { opacity: 1; }
+
+        .glow-line {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity: 0.3;
+        }
     </style>
 </head>
 <body>
-    <!-- BANNER RECORDATORIO (ORIGINAL) -->
-    <div id="reminderBanner" class="reminder-banner">
-        <span>¡Te recordamos! Tenés una 2da cuota pendiente de $<span id="pendingAmount">0</span>.</span>
-        <button onclick="paySecondInstallment()">Pagar 2da cuota ahora</button>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-4 right-4 toast-gold px-6 py-3 rounded-lg shadow-2xl transform translate-x-full transition-transform duration-300 z-[100] flex items-center gap-2 font-semibold text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+        <span>¡Producto agregado al carrito!</span>
     </div>
 
-    <!-- HEADER (ORIGINAL) -->
-    <header>
-        <div>
-            <h1>Remeras Ruca del Valle</h1>
-            <p class="subtitle">Hecho con raíces ❤️</p>
-        </div>
-        <div class="cart-icon" onclick="openCart()">
-            🛒 Carrito <span class="cart-count" id="cartCount">0</span>
+    <!-- ==================== HEADER ==================== -->
+    <header class="sticky top-0 z-40 bg-black/90 backdrop-blur-xl border-b border-[#2A2A2A]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <!-- LOGO SVG -->
+                <div class="w-9 h-9 sm:w-11 sm:h-11 flex-shrink-0">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                        <polygon points="50,2 95,27 95,73 50,98 5,73 5,27" fill="#F5B731"/>
+                        <polygon points="50,8 90,30 90,70 50,92 10,70 10,30" fill="#0A0A0A"/>
+                        <!-- Left tower -->
+                        <path d="M20,56 L20,34 L25,34 L25,26 L35,26 L35,34 L40,34 L40,56 Z" fill="none" stroke="#F5B731" stroke-width="2.5" stroke-linejoin="round"/>
+                        <!-- Center tower (taller) -->
+                        <path d="M50,56 L50,28 L53,28 L53,18 L63,18 L63,28 L66,28 L66,56 Z" fill="none" stroke="#F5B731" stroke-width="2.5" stroke-linejoin="round"/>
+                        <!-- Right tower -->
+                        <path d="M62,56 L62,34 L67,34 L67,26 L77,26 L77,34 L82,34 L82,56 Z" fill="none" stroke="#F5B731" stroke-width="2.5" stroke-linejoin="round"/>
+                        <!-- Moon crescent -->
+                        <path d="M30,78 Q48,62 66,78 Q48,88 30,78 Z" fill="none" stroke="#F5B731" stroke-width="2.5"/>
+                        <!-- Cross on center tower -->
+                        <path d="M57,14 L57,8 L61,8 L61,14 L65,14 L65,17 L61,17 L61,21 L57,21 L57,17 L53,17 L53,14 Z" fill="#F5B731"/>
+                        <!-- Circle on center tower -->
+                        <circle cx="58" cy="38" r="3" fill="none" stroke="#F5B731" stroke-width="2"/>
+                        <!-- Dot grid on right area -->
+                        <circle cx="64" cy="44" r="1.8" fill="#F5B731"/>
+                        <circle cx="70" cy="44" r="1.8" fill="#F5B731"/>
+                        <circle cx="64" cy="50" r="1.8" fill="#F5B731"/>
+                        <circle cx="70" cy="50" r="1.8" fill="#F5B731"/>
+                        <circle cx="64" cy="56" r="1.8" fill="#F5B731"/>
+                        <circle cx="70" cy="56" r="1.8" fill="#F5B731"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-sm sm:text-base font-cinzel font-bold text-[#F5B731] tracking-[0.2em] leading-tight">RUCA DEL VALLE</h1>
+                    <p class="text-[10px] text-gray-500 tracking-[0.3em] uppercase hidden sm:block">Hecho con raíces</p>
+                </div>
+            </div>
+            <button onclick="toggleCart()" class="relative p-2 text-gray-400 hover:text-[#F5B731] transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                <span id="cart-count" class="absolute -top-1 -right-1 w-5 h-5 text-[10px] font-bold text-black rounded-full hidden flex items-center justify-center" style="background:#F5B731;">0</span>
+            </button>
         </div>
     </header>
 
-    <!-- HERO (ORIGINAL) -->
-    <section class="hero">
-        <h2>Remeras Ruca del Valle</h2>
-        <p>Edición limitada. Sin intermediarios, sin comisiones.</p>
-        <span class="stock-badge">Stock disponible</span>
-    </section>
+    <!-- ==================== HERO SECTION ==================== -->
+    <section class="relative hero-bg overflow-hidden">
+        <div class="absolute inset-0 hero-grid-pattern"></div>
+        <div class="relative max-w-7xl mx-auto py-16 sm:py-24 px-4 sm:px-6 lg:px-8 text-center">
+            
+            <!-- Large Logo -->
+            <div class="flex justify-center mb-8">
+                <div class="w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 drop-shadow-2xl">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                        <defs>
+                            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FFD54F"/>
+                                <stop offset="100%" style="stop-color:#C49000"/>
+                            </linearGradient>
+                        </defs>
+                        <polygon points="50,2 95,27 95,73 50,98 5,73 5,27" fill="url(#goldGrad)"/>
+                        <polygon points="50,8 90,30 90,70 50,92 10,70 10,30" fill="#0A0A0A"/>
+                        <path d="M20,56 L20,34 L25,34 L25,26 L35,26 L35,34 L40,34 L40,56 Z" fill="none" stroke="#F5B731" stroke-width="2.5" stroke-linejoin="round"/>
+                        <path d="M50,56 L50,28 L53,28 L53,18 L63,18 L63,28 L66,28 L66,56 Z" fill="none" stroke="#F5B731" stroke-width="2.5" stroke-linejoin="round"/>
+                        <path d="M62,56 L62,34 L67,34 L67,26 L77,26 L77,34 L82,34 L82,56 Z" fill="none" stroke="#F5B731" stroke-width="2.5" stroke-linejoin="round"/>
+                        <path d="M30,78 Q48,62 66,78 Q48,88 30,78 Z" fill="none" stroke="#F5B731" stroke-width="2.5"/>
+                        <path d="M57,14 L57,8 L61,8 L61,14 L65,14 L65,17 L61,17 L61,21 L57,21 L57,17 L53,17 L53,14 Z" fill="#F5B731"/>
+                        <circle cx="58" cy="38" r="3" fill="none" stroke="#F5B731" stroke-width="2"/>
+                        <circle cx="64" cy="44" r="1.8" fill="#F5B731"/>
+                        <circle cx="70" cy="44" r="1.8" fill="#F5B731"/>
+                        <circle cx="64" cy="50" r="1.8" fill="#F5B731"/>
+                        <circle cx="70" cy="50" r="1.8" fill="#F5B731"/>
+                        <circle cx="64" cy="56" r="1.8" fill="#F5B731"/>
+                        <circle cx="70" cy="56" r="1.8" fill="#F5B731"/>
+                    </svg>
+                </div>
+            </div>
 
-    <!-- NUEVO: GALERÍA DE MODELOS -->
-    <section class="models-section">
-        <h3>Nuestros Modelos</h3>
-        <p style="text-align: center; margin-bottom: 20px; color: var(--light-text);">Mirá cómo quedan nuestras camisetas en acción</p>
-        <div class="models-grid">
-            <div class="model-item"><img src="assets/modelos/foto1.jpg" alt="Modelo 1" onerror="this.style.background='#ccc'; this.alt='Subir foto1.jpg'"></div>
-            <div class="model-item"><img src="assets/modelos/foto2.jpg" alt="Modelo 2" onerror="this.style.background='#ccc'; this.alt='Subir foto2.jpg'"></div>
-            <div class="model-item"><video controls><source src="assets/modelos/video1.mp4" type="video/mp4">Video no soportado</video></div>
-            <div class="model-item"><video controls><source src="assets/modelos/video2.mp4" type="video/mp4">Video no soportado</video></div>
+            <h2 class="font-cinzel text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-wider mb-1">EDICIÓN LIMITADA</h2>
+            <div class="glow-line w-40 mx-auto my-6"></div>
+            <p class="text-base sm:text-lg text-gray-400 max-w-xl mx-auto font-light leading-relaxed">
+                Sin intermediarios, sin comisiones.<br>
+                <span class="text-[#F5B731] font-semibold">Hecho con raíces.</span>
+            </p>
+            <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="document.getElementById('producto').scrollIntoView({behavior:'smooth'})" class="btn-gold px-10 py-4 rounded-lg text-sm sm:text-base font-bold">
+                    ️ Ver Producto
+                </button>
+                <a href="https://wa.me/3834565209?text=Hola!%20Tengo%20una%20consulta" target="_blank" class="btn-outline-gold px-10 py-4 rounded-lg text-sm sm:text-base font-bold flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                    Escribinos
+                </a>
+            </div>
         </div>
     </section>
 
-    <!-- CATÁLOGO (ORIGINAL) -->
-    <section class="catalog">
-        <h3>Catálogo</h3>
-        <div class="products-grid" id="productsGrid"></div>
+    <!-- ==================== SECTIONS TAGS ==================== -->
+    <div class="bg-[#121212] border-y border-[#2A2A2A]">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex flex-wrap justify-center gap-2 sm:gap-3 text-xs">
+                <span class="section-tag px-3 py-1.5 rounded-full font-medium">🛡️ Escuderos</span>
+                <span class="section-tag px-3 py-1.5 rounded-full font-medium">⚔️ Templarios</span>
+                <span class="section-tag px-3 py-1.5 rounded-full font-medium"> Adalides</span>
+                <span class="section-tag px-3 py-1.5 rounded-full font-medium">👑 Herederas</span>
+                <span class="section-tag px-3 py-1.5 rounded-full font-medium"> Caperucitas</span>
+                <span class="section-tag px-3 py-1.5 rounded-full font-medium">🏰 Mayor</span>
+                <span class="section-tag px-3 py-1.5 rounded-full font-medium">️ Milicianos</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== PRODUCTO PRINCIPAL ==================== -->
+    <main id="producto" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+        
+        <!-- Section Title -->
+        <div class="text-center mb-12">
+            <h3 class="font-cinzel text-2xl sm:text-3xl font-bold text-white mb-2 tracking-wider">NUESTRA CAMISETA</h3>
+            <div class="section-divider w-20 mx-auto"></div>
+            <p class="text-gray-500 mt-4 text-sm">Personalizable · Algodón premium · Edición limitada</p>
+        </div>
+
+        <!-- Product Card - Single Product -->
+        <div class="max-w-4xl mx-auto">
+            <div class="card-dark rounded-2xl overflow-hidden">
+                <div class="grid md:grid-cols-2">
+                    
+                    <!-- Product Image Area -->
+                    <div class="relative h-80 sm:h-96 md:h-full min-h-[320px] bg-gradient-to-br from-[#1E1E1E] to-[#2A2A2A] flex items-center justify-center group">
+                        
+                        <!-- PLACEHOLDER: Reemplazá esta imagen con tu camiseta real -->
+                        <!-- <img src="TU_IMAGEN_AQUI.jpg" alt="Camiseta Ruca del Valle" class="w-full h-full object-cover"> -->
+                        
+                        <!-- Placeholder visual hasta que agregues tu imagen -->
+                        <div class="text-center px-6">
+                            <div class="w-40 h-44 sm:w-48 sm:h-52 mx-auto border-2 border-dashed border-[#3A3A3A] rounded-xl flex flex-col items-center justify-center mb-4 group-hover:border-[#F5B731] transition-colors">
+                                <svg class="w-12 h-12 text-[#3A3A3A] mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="text-xs text-gray-600 font-medium">Imagen de la camiseta</p>
+                                <p class="text-[10px] text-gray-700 mt-1">Reemplazar con foto real</p>
+                            </div>
+                            <span class="badge-stock text-[10px] font-bold px-3 py-1 rounded-full inline-block">STOCK DISPONIBLE</span>
+                        </div>
+
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#1A1A1A] via-transparent to-transparent opacity-60"></div>
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="p-6 sm:p-8 flex flex-col justify-center">
+                        <h4 class="font-cinzel text-xl sm:text-2xl font-bold text-white mb-2">Camiseta Oficial Ruca del Valle</h4>
+                        <p class="text-gray-400 text-sm leading-relaxed mb-6">
+                            Camiseta personalizada con estampado de tu sección. Elegí tu número único y el nombre que querés que lleve. Algodón premium de primera calidad.
+                        </p>
+                        
+                        <div class="mb-6">
+                            <span class="text-3xl font-bold text-[#F5B731]">$15.000</span>
+                        </div>
+
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center gap-2 text-sm text-gray-400">
+                                <svg class="w-4 h-4 text-[#F5B731] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                <span>Personalización de nombre incluida</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-400">
+                                <svg class="w-4 h-4 text-[#F5B731] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                <span>Número único por sección (1-99)</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-400">
+                                <svg class="w-4 h-4 text-[#F5B731] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                <span>7 secciones disponibles</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-400">
+                                <svg class="w-4 h-4 text-[#F5B731] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                <span>Pago en 1 o 2 cuotas</span>
+                            </div>
+                        </div>
+
+                        <button onclick="openProductModal()" class="btn-gold w-full py-4 rounded-xl text-sm font-bold">
+                            🛒 COMPRAR AHORA
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ==================== MODELOS / GALERÍA ==================== -->
+    <section class="bg-[#121212] border-y border-[#2A2A2A]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="text-center mb-12">
+                <h3 class="font-cinzel text-2xl sm:text-3xl font-bold text-white mb-2 tracking-wider">NUESTROS MODELOS</h3>
+                <div class="section-divider w-20 mx-auto"></div>
+                <p class="text-gray-500 mt-4 text-sm">Mirá cómo lucen nuestras camisetas</p>
+            </div>
+
+            <!-- PLACEHOLDER: Reemplazá estos placeholders con fotos reales de tus modelos -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                
+                <!-- Model 1 - PLACEHOLDER -->
+                <div class="model-card rounded-xl overflow-hidden aspect-[3/4] bg-[#1E1E1E] border border-[#2A2A2A]">
+                    <div class="w-full h-full flex flex-col items-center justify-center">
+                        <svg class="w-10 h-10 text-[#3A3A3A] mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="text-[10px] text-gray-600 text-center px-2">Foto del modelo 1</p>
+                    </div>
+                    <!-- <img src="MODELO_1.jpg" alt="Modelo 1" class="w-full h-full object-cover"> -->
+                    <div class="overlay flex items-end p-4">
+                        <p class="text-sm font-semibold text-white">Modelo 1</p>
+                    </div>
+                </div>
+
+                <!-- Model 2 - PLACEHOLDER -->
+                <div class="model-card rounded-xl overflow-hidden aspect-[3/4] bg-[#1E1E1E] border border-[#2A2A2A]">
+                    <div class="w-full h-full flex flex-col items-center justify-center">
+                        <svg class="w-10 h-10 text-[#3A3A3A] mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="text-[10px] text-gray-600 text-center px-2">Foto del modelo 2</p>
+                    </div>
+                    <!-- <img src="MODELO_2.jpg" alt="Modelo 2" class="w-full h-full object-cover"> -->
+                    <div class="overlay flex items-end p-4">
+                        <p class="text-sm font-semibold text-white">Modelo 2</p>
+                    </div>
+                </div>
+
+                <!-- Model 3 - PLACEHOLDER -->
+                <div class="model-card rounded-xl overflow-hidden aspect-[3/4] bg-[#1E1E1E] border border-[#2A2A2A]">
+                    <div class="w-full h-full flex flex-col items-center justify-center">
+                        <svg class="w-10 h-10 text-[#3A3A3A] mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="text-[10px] text-gray-600 text-center px-2">Foto del modelo 3</p>
+                    </div>
+                    <!-- <img src="MODELO_3.jpg" alt="Modelo 3" class="w-full h-full object-cover"> -->
+                    <div class="overlay flex items-end p-4">
+                        <p class="text-sm font-semibold text-white">Modelo 3</p>
+                    </div>
+                </div>
+
+                <!-- Model 4 - PLACEHOLDER -->
+                <div class="model-card rounded-xl overflow-hidden aspect-[3/4] bg-[#1E1E1E] border border-[#2A2A2A]">
+                    <div class="w-full h-full flex flex-col items-center justify-center">
+                        <svg class="w-10 h-10 text-[#3A3A3A] mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="text-[10px] text-gray-600 text-center px-2">Foto del modelo 4</p>
+                    </div>
+                    <!-- <img src="MODELO_4.jpg" alt="Modelo 4" class="w-full h-full object-cover"> -->
+                    <div class="overlay flex items-end p-4">
+                        <p class="text-sm font-semibold text-white">Modelo 4</p>
+                    </div>
+                </div>
+
+                <!-- Model 5 - PLACEHOLDER -->
+                <div class="model-card rounded-xl overflow-hidden aspect-[3/4] bg-[#1E1E1E] border border-[#2A2A2A]">
+                    <div class="w-full h-full flex flex-col items-center justify-center">
+                        <svg class="w-10 h-10 text-[#3A3A3A] mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="text-[10px] text-gray-600 text-center px-2">Foto del modelo 5</p>
+                    </div>
+                    <!-- <img src="MODELO_5.jpg" alt="Modelo 5" class="w-full h-full object-cover"> -->
+                    <div class="overlay flex items-end p-4">
+                        <p class="text-sm font-semibold text-white">Modelo 5</p>
+                    </div>
+                </div>
+
+                <!-- Model 6 - PLACEHOLDER -->
+                <div class="model-card rounded-xl overflow-hidden aspect-[3/4] bg-[#1E1E1E] border border-[#2A2A2A]">
+                    <div class="w-full h-full flex flex-col items-center justify-center">
+                        <svg class="w-10 h-10 text-[#3A3A3A] mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="text-[10px] text-gray-600 text-center px-2">Foto del modelo 6</p>
+                    </div>
+                    <!-- <img src="MODELO_6.jpg" alt="Modelo 6" class="w-full h-full object-cover"> -->
+                    <div class="overlay flex items-end p-4">
+                        <p class="text-sm font-semibold text-white">Modelo 6</p>
+                    </div>
+                </div>
+
+                <!-- Model 7 - PLACEHOLDER -->
+                <div class="model-card rounded-xl overflow-hidden aspect-[3/4] bg-[#1E1E1E] border border-[#2A2A2A]">
+                    <div class="w-full h-full flex flex-col items-center justify-center">
+                        <svg class="w-10 h-10 text-[#3A3A3A] mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="text-[10px] text-gray-600 text-center px-2">Foto del modelo 7</p>
+                    </div>
+                    <!-- <img src="MODELO_7.jpg" alt="Modelo 7" class="w-full h-full object-cover"> -->
+                    <div class="overlay flex items-end p-4">
+                        <p class="text-sm font-semibold text-white">Modelo 7</p>
+                    </div>
+                </div>
+
+                <!-- Model 8 - PLACEHOLDER -->
+                <div class="model-card rounded-xl overflow-hidden aspect-[3/4] bg-[#1E1E1E] border border-[#2A2A2A]">
+                    <div class="w-full h-full flex flex-col items-center justify-center">
+                        <svg class="w-10 h-10 text-[#3A3A3A] mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="text-[10px] text-gray-600 text-center px-2">Foto del modelo 8</p>
+                    </div>
+                    <!-- <img src="MODELO_8.jpg" alt="Modelo 8" class="w-full h-full object-cover"> -->
+                    <div class="overlay flex items-end p-4">
+                        <p class="text-sm font-semibold text-white">Modelo 8</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </section>
 
-    <!-- FOOTER (ORIGINAL) -->
-    <footer>
-        <p>Remeras Ruca del Valle © 2026 | Hecho con ❤️ y sin comisiones.</p>
-        <p>¿Dudas? <a href="https://wa.me/3834565209?text=Hola!%20Tengo%20una%20consulta">Escribinos por WhatsApp</a></p>
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-[#0A0A0A] border-t border-[#2A2A2A] py-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex justify-center mb-6">
+                <div class="w-14 h-14">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                        <polygon points="50,2 95,27 95,73 50,98 5,73 5,27" fill="#F5B731"/>
+                        <polygon points="50,8 90,30 90,70 50,92 10,70 10,30" fill="#0A0A0A"/>
+                        <path d="M20,56 L20,34 L25,34 L25,26 L35,26 L35,34 L40,34 L40,56 Z" fill="none" stroke="#F5B731" stroke-width="2.5" stroke-linejoin="round"/>
+                        <path d="M50,56 L50,28 L53,28 L53,18 L63,18 L63,28 L66,28 L66,56 Z" fill="none" stroke="#F5B731" stroke-width="2.5" stroke-linejoin="round"/>
+                        <path d="M62,56 L62,34 L67,34 L67,26 L77,26 L77,34 L82,34 L82,56 Z" fill="none" stroke="#F5B731" stroke-width="2.5" stroke-linejoin="round"/>
+                        <path d="M30,78 Q48,62 66,78 Q48,88 30,78 Z" fill="none" stroke="#F5B731" stroke-width="2.5"/>
+                        <path d="M57,14 L57,8 L61,8 L61,14 L65,14 L65,17 L61,17 L61,21 L57,21 L57,17 L53,17 L53,14 Z" fill="#F5B731"/>
+                    </svg>
+                </div>
+            </div>
+            <p class="font-cinzel text-[#F5B731] text-lg font-bold tracking-widest">RUCA DEL VALLE</p>
+            <p class="text-gray-600 mt-2 text-sm">Remeras Ruca del Valle © 2026</p>
+            <p class="text-gray-600 text-sm">Hecho con ❤️ y sin comisiones.</p>
+            <p class="mt-4">
+                <a href="https://wa.me/3834565209?text=Hola!%20Tengo%20una%20consulta" class="text-[#F5B731] hover:text-[#FFD54F] underline transition-colors text-sm">¿Dudas? Escribinos por WhatsApp</a>
+            </p>
+        </div>
     </footer>
 
-    <!-- MODAL TABLA DE TALLES (ORIGINAL) -->
-    <div id="sizeModal" class="modal">
-        <div class="modal-content">
-            <button class="close-modal" onclick="closeModal('sizeModal')">×</button>
-            <h3>Tabla de talles</h3>
-            <table class="size-table">
-                <thead><tr><th>Talle</th><th>Ancho (cm)</th><th>Largo (cm)</th></tr></thead>
-                <tbody>
-                    <tr><td>S</td><td>48</td><td>68</td></tr>
-                    <tr><td>M</td><td>51</td><td>70</td></tr>
-                    <tr><td>L</td><td>54</td><td>72</td></tr>
-                    <tr><td>XL</td><td>57</td><td>74</td></tr>
-                    <tr><td>XXL</td><td>60</td><td>76</td></tr>
-                </tbody>
-            </table>
-            <p class="form-note">Medidas aproximadas. Puede variar ±2cm.</p>
-        </div>
-    </div>
-
-    <!-- MODAL CARRITO (ORIGINAL) -->
-    <div id="cartModal" class="modal">
-        <div class="modal-content">
-            <button class="close-modal" onclick="closeModal('cartModal')">×</button>
-            <h3>Tu Carrito</h3>
-            <div id="cartItems"></div>
-            <div class="cart-total">Total: $<span id="cartTotal">0</span></div>
-            <button class="btn-buy" onclick="openCheckout()">Continuar al pago</button>
-        </div>
-    </div>
-
-    <!-- MODAL CHECKOUT (ORIGINAL + NUEVOS CAMPOS INYECTADOS) -->
-    <div id="checkoutModal" class="modal">
-        <div class="modal-content">
-            <button class="close-modal" onclick="closeModal('checkoutModal')">×</button>
-            <h3>Datos para la compra</h3>
+    <!-- ==================== PRODUCT MODAL ==================== -->
+    <div id="product-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-6 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 modal-backdrop transition-opacity" aria-hidden="true" onclick="closeProductModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             
-            <!-- NUEVO: DATOS DEL CLIENTE -->
-            <div class="form-group">
-                <label>Nombre completo *</label>
-                <input type="text" id="clientName" placeholder="Ej: Juan Carlos" required>
-            </div>
-            <div class="form-group">
-                <label>Apellido *</label>
-                <input type="text" id="clientSurname" placeholder="Ej: Pérez" required>
-            </div>
-            
-            <!-- NUEVO: PERSONALIZACIÓN Y SECCIÓN -->
-            <div class="section-divider"></div>
-            <div class="form-group">
-                <label>Nombre para estampar en la camiseta</label>
-                <input type="text" id="shirtCustomName" placeholder="Ej: MARADONA (opcional)" maxlength="15">
-                <p class="form-note">Máx. 15 caracteres. Vacío = sin personalización</p>
-            </div>
-            <div class="form-group">
-                <label>Sección para estampar *</label>
-                <select id="shirtSection" required onchange="updateAvailableNumbers()">
-                    <option value="">Seleccionar sección</option>
-                    <option value="escuderos">Escuderos</option>
-                    <option value="templarios">Templarios</option>
-                    <option value="adalides">Adalides</option>
-                    <option value="herederas">Herederas</option>
-                    <option value="caperucitas">Caperucitas</option>
-                    <option value="mayor">Mayor</option>
-                    <option value="milicianos">Milicianos</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Número de camiseta (1-99) *</label>
-                <select id="shirtNumber" required onchange="checkNumberAvailability()">
-                    <option value="">Primero elegí una sección</option>
-                </select>
-                <div id="numberWarning" class="number-warning">⚠️ Número ya tomado en esta sección. Elegí otro.</div>
-                <p class="form-note">Cada número es único por sección</p>
-            </div>
-
-            <!-- MÉTODO DE PAGO (ORIGINAL) -->
-            <h3 style="margin: 25px 0 10px;">Método de pago</h3>
-            <div class="payment-options">
-                <div class="payment-option selected" onclick="selectPayment(this, 'single')">
-                    <strong>1 pago</strong>
-                    <p style="margin: 5px 0 0 0; color: var(--light-text); font-size: 0.9rem;">Pagás el total ahora por transferencia o QR</p>
+            <div class="inline-block align-bottom bg-[#1A1A1A] rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full fade-in border border-[#2A2A2A]">
+                
+                <!-- Modal Header -->
+                <div class="px-6 pt-6 pb-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-cinzel text-lg font-bold text-[#F5B731]">Personalizar Camiseta</h3>
+                            <p class="text-xs text-gray-500 mt-0.5">Completá los datos para tu remera</p>
+                        </div>
+                        <button onclick="closeProductModal()" class="text-gray-500 hover:text-white transition-colors p-1">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                    <div class="section-divider mt-4"></div>
                 </div>
-                <div class="payment-option" onclick="selectPayment(this, 'installment')">
-                    <strong>2 pagos</strong>
-                    <p style="margin: 5px 0 0 0; color: var(--light-text); font-size: 0.9rem;">Pagá la mitad ahora y el siguiente mes la otra mitad</p>
+
+                <!-- Modal Body -->
+                <div class="px-6 pb-6 space-y-4">
+                    
+                    <!-- Customer Name -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-[#F5B731] uppercase tracking-widest mb-1.5">Nombre *</label>
+                            <input type="text" id="cust-name" class="input-dark w-full rounded-lg px-3 py-2.5 text-sm" placeholder="Tu nombre">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-[#F5B731] uppercase tracking-widest mb-1.5">Apellido *</label>
+                            <input type="text" id="cust-lastname" class="input-dark w-full rounded-lg px-3 py-2.5 text-sm" placeholder="Tu apellido">
+                        </div>
+                    </div>
+
+                    <!-- Size -->
+                    <div>
+                        <label class="block text-[10px] font-bold text-[#F5B731] uppercase tracking-widest mb-1.5">Talle *</label>
+                        <select id="size-select" class="input-dark w-full rounded-lg px-3 py-2.5 text-sm">
+                            <option value="S">S — Ancho 48cm / Largo 68cm</option>
+                            <option value="M">M — Ancho 51cm / Largo 70cm</option>
+                            <option value="L">L — Ancho 54cm / Largo 72cm</option>
+                            <option value="XL">XL — Ancho 57cm / Largo 74cm</option>
+                            <option value="XXL">XXL — Ancho 60cm / Largo 76cm</option>
+                        </select>
+                    </div>
+
+                    <!-- Section -->
+                    <div>
+                        <label class="block text-[10px] font-bold text-[#F5B731] uppercase tracking-widest mb-1.5">Sección *</label>
+                        <select id="section-select" onchange="checkNumberAvailability()" class="input-dark w-full rounded-lg px-3 py-2.5 text-sm">
+                            <option value="">Elegí tu sección...</option>
+                            <option value="Escuderos">️ Escuderos</option>
+                            <option value="Templarios">⚔️ Templarios</option>
+                            <option value="Adalides">🏹 Adalides</option>
+                            <option value="Herederas">👑 Herederas</option>
+                            <option value="Caperucitas">🎭 Caperucitas</option>
+                            <option value="Mayor"> Mayor</option>
+                            <option value="Milicianos">🏛️ Milicianos</option>
+                        </select>
+                    </div>
+
+                    <!-- Number -->
+                    <div>
+                        <label class="block text-[10px] font-bold text-[#F5B731] uppercase tracking-widest mb-1.5">Número (1-99) *</label>
+                        <input type="number" id="number-input" min="1" max="99" oninput="validateNumberInput()" class="input-dark w-full rounded-lg px-3 py-2.5 text-sm" placeholder="Ej: 10">
+                        <p id="number-error" class="text-red-400 text-xs mt-1 hidden">⚠️ Este número ya está tomado en esta sección.</p>
+                    </div>
+
+                    <!-- Custom Shirt Name -->
+                    <div>
+                        <label class="block text-[10px] font-bold text-[#F5B731] uppercase tracking-widest mb-1.5">Nombre para estampar <span class="text-gray-600 normal-case">(Opcional)</span></label>
+                        <input type="text" id="custom-shirt-name" maxlength="12" class="input-dark w-full rounded-lg px-3 py-2.5 text-sm uppercase tracking-wider" placeholder="Nombre en la remera">
+                        <p class="text-[10px] text-gray-600 mt-1">Máximo 12 caracteres. Si no ponés nada, se usa tu nombre.</p>
+                    </div>
+
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="bg-black/40 px-6 py-4 sm:flex sm:flex-row-reverse gap-3">
+                    <button type="button" id="add-to-cart-btn" onclick="addToCart()" class="w-full sm:w-auto btn-gold px-8 py-3 rounded-xl text-sm font-bold disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:shadow-none">
+                        Agregar al Carrito
+                    </button>
+                    <button type="button" onclick="closeProductModal()" class="mt-3 sm:mt-0 w-full sm:w-auto btn-outline-gold px-8 py-3 rounded-xl text-sm font-bold">
+                        Cancelar
+                    </button>
                 </div>
             </div>
-
-            <div class="qr-box">
-                <h4>Datos para transferir</h4>
-                <p style="font-size: 1.5rem; font-weight: 700; margin: 10px 0;">$<span id="checkoutTotal">0</span></p>
-                <p>Alias / CBU</p>
-                <div class="alias-box" onclick="copyAlias()">TU.ALIAS.AQUI <small>Copiar alias</small></div>
-                <p style="margin-top: 15px;">O escaneá el QR Para Pagar:</p>
-                <div class="qr-placeholder">Reemplazá esto con tu QR real</div>
-            </div>
-
-            <p class="form-note" style="text-align: center; margin: 15px 0;">
-                Una vez que realizaste el pago, tocá el botón de abajo para enviarnos el comprobante por WhatsApp e Indicarnos el Nombre Personalizado en tu Camiseta.
-            </p>
-            <button class="btn-buy" onclick="finishPurchase()">Ya pagué — Enviar comprobante</button>
-            <button class="btn-buy" style="background: #666; margin-top: 10px;" onclick="closeModal('checkoutModal'); openCart();">Volver al carrito</button>
         </div>
     </div>
 
-    <!-- TOAST NOTIFICACIÓN (ORIGINAL) -->
-    <div id="toast" class="toast">Producto agregado</div>
+    <!-- ==================== SIZE CHART MODAL ==================== -->
+    <div id="size-chart-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 text-center">
+            <div class="fixed inset-0 modal-backdrop transition-opacity" onclick="toggleSizeChart()"></div>
+            <div class="inline-block bg-[#1A1A1A] rounded-2xl text-left overflow-hidden shadow-xl transform transition-all max-w-md w-full fade-in border border-[#2A2A2A] p-6 relative z-10">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-cinzel text-lg font-bold text-[#F5B731]">Tabla de Talles</h3>
+                    <button onclick="toggleSizeChart()" class="text-gray-500 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+                <div class="section-divider mb-4"></div>
+                <table class="min-w-full">
+                    <thead>
+                        <tr class="border-b border-[#2A2A2A]">
+                            <th class="px-4 py-3 text-left text-[10px] font-bold text-[#F5B731] uppercase tracking-widest">Talle</th>
+                            <th class="px-4 py-3 text-left text-[10px] font-bold text-[#F5B731] uppercase tracking-widest">Ancho (cm)</th>
+                            <th class="px-4 py-3 text-left text-[10px] font-bold text-[#F5B731] uppercase tracking-widest">Largo (cm)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#2A2A2A]">
+                        <tr class="hover:bg-black/30"><td class="px-4 py-3 font-semibold text-white text-sm">S</td><td class="px-4 py-3 text-gray-400 text-sm">48</td><td class="px-4 py-3 text-gray-400 text-sm">68</td></tr>
+                        <tr class="hover:bg-black/30"><td class="px-4 py-3 font-semibold text-white text-sm">M</td><td class="px-4 py-3 text-gray-400 text-sm">51</td><td class="px-4 py-3 text-gray-400 text-sm">70</td></tr>
+                        <tr class="hover:bg-black/30"><td class="px-4 py-3 font-semibold text-white text-sm">L</td><td class="px-4 py-3 text-gray-400 text-sm">54</td><td class="px-4 py-3 text-gray-400 text-sm">72</td></tr>
+                        <tr class="hover:bg-black/30"><td class="px-4 py-3 font-semibold text-white text-sm">XL</td><td class="px-4 py-3 text-gray-400 text-sm">57</td><td class="px-4 py-3 text-gray-400 text-sm">74</td></tr>
+                        <tr class="hover:bg-black/30"><td class="px-4 py-3 font-semibold text-white text-sm">XXL</td><td class="px-4 py-3 text-gray-400 text-sm">60</td><td class="px-4 py-3 text-gray-400 text-sm">76</td></tr>
+                    </tbody>
+                </table>
+                <p class="text-[10px] text-gray-600 mt-4 text-center">Medidas aproximadas. Puede variar ±2cm.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== CART SIDEBAR ==================== -->
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 z-50 w-full max-w-md cart-sidebar shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out">
+        <div class="flex flex-col h-full">
+            <div class="px-6 py-5 bg-black/40 border-b border-[#2A2A2A] flex justify-between items-center">
+                <h2 class="font-cinzel text-lg font-bold text-[#F5B731]">Tu Carrito</h2>
+                <button onclick="toggleCart()" class="text-gray-500 hover:text-white transition-colors">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            
+            <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4">
+                <div class="text-center text-gray-600 mt-16">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-[#2A2A2A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <p class="text-base font-medium text-gray-500">El carrito está vacío</p>
+                    <p class="text-xs mt-1 text-gray-600">Agregá tu camiseta para comenzar</p>
+                </div>
+            </div>
+
+            <div class="border-t border-[#2A2A2A] p-6 bg-black/40">
+                <div class="flex justify-between text-base font-bold text-[#F5B731] mb-4">
+                    <p>Total</p>
+                    <p id="cart-total">$0</p>
+                </div>
+                <button onclick="openCheckoutModal()" id="checkout-btn" disabled class="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-xl shadow-sm text-sm font-bold text-black bg-[#F5B731] hover:bg-[#FFD54F] disabled:opacity-40 disabled:cursor-not-allowed transition-all uppercase tracking-widest">
+                    Continuar al Pago
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== CHECKOUT MODAL ==================== -->
+    <div id="checkout-modal" class="fixed inset-0 z-[60] hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 text-center">
+            <div class="fixed inset-0 modal-backdrop transition-opacity" onclick="closeCheckoutModal()"></div>
+            <div class="inline-block bg-[#1A1A1A] rounded-2xl text-left overflow-hidden shadow-xl transform transition-all max-w-lg w-full fade-in border border-[#2A2A2A] relative z-10">
+                
+                <div id="payment-step" class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-cinzel text-lg font-bold text-[#F5B731]">Método de Pago</h3>
+                        <button onclick="closeCheckoutModal()" class="text-gray-500 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                    <div class="section-divider mb-6"></div>
+                    
+                    <p class="text-sm text-gray-500 mb-4">Elegí cómo querés abonar:</p>
+                    
+                    <div class="space-y-3">
+                        <div onclick="selectPayment('full')" id="payment-full" class="payment-option selected flex items-center p-4 rounded-xl bg-black/30">
+                            <input type="radio" name="payment-method" value="full" class="h-4 w-4 text-[#F5B731] focus:ring-[#F5B731] border-gray-600 bg-[#1E1E1E]" checked>
+                            <div class="ml-3">
+                                <span class="block text-sm font-bold text-white">1 Pago</span>
+                                <span class="block text-xs text-gray-500">Pagás el total ahora por transferencia o QR</span>
+                            </div>
+                        </div>
+
+                        <div onclick="selectPayment('installments')" id="payment-installments" class="payment-option flex items-center p-4 rounded-xl bg-black/30">
+                            <input type="radio" name="payment-method" value="installments" class="h-4 w-4 text-[#F5B731] focus:ring-[#F5B731] border-gray-600 bg-[#1E1E1E]">
+                            <div class="ml-3">
+                                <span class="block text-sm font-bold text-white">2 Pagos</span>
+                                <span class="block text-xs text-gray-500">Pagá la mitad ahora y el siguiente mes la otra mitad</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="bank-details" class="mt-6 bg-black/30 p-5 rounded-xl border border-[#2A2A2A]">
+                        <h4 class="font-cinzel font-bold text-[#F5B731] mb-3 text-[10px] uppercase tracking-widest">Datos para Transferir</h4>
+                        <p class="text-3xl font-bold text-[#F5B731] mb-4" id="transfer-amount">$0</p>
+                        
+                        <div class="mb-4">
+                            <p class="text-[10px] text-gray-600 uppercase tracking-widest mb-1">Alias / CBU</p>
+                            <div class="flex items-center gap-2">
+                                <code class="bg-black px-3 py-2.5 rounded-lg border border-[#2A2A2A] text-sm flex-1 select-all text-[#F5B731] font-mono">TU.ALIAS.AQUI</code>
+                                <button onclick="copyAlias()" class="text-xs text-[#F5B731] hover:text-[#FFD54F] font-semibold px-3 py-2.5 border border-[#F5B731]/30 rounded-lg hover:bg-[#F5B731]/10 transition-all">Copiar</button>
+                            </div>
+                        </div>
+
+                        <div class="mb-4 text-center">
+                            <p class="text-[10px] text-gray-600 uppercase tracking-widest mb-2">O escaneá el QR para pagar</p>
+                            <div class="w-36 h-36 bg-black mx-auto flex items-center justify-center rounded-xl border border-[#2A2A2A]">
+                                <span class="text-xs text-gray-600">QR Placeholder</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#F5B731]/10 border-l-4 border-[#F5B731] p-4 mb-4 rounded-r">
+                            <p class="text-sm text-[#F5B731]/80">
+                                ⚠️ Una vez que realizaste el pago, tocá el botón de abajo para enviarnos el comprobante por WhatsApp e indicarnos el <strong>Nombre Personalizado</strong> en tu Camiseta.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex gap-3">
+                        <button onclick="closeCheckoutModal()" class="flex-1 bg-black/50 text-gray-500 py-3 rounded-xl hover:bg-black/70 border border-[#2A2A2A] font-semibold text-sm uppercase tracking-widest transition-all">Volver</button>
+                        <button onclick="sendWhatsAppOrder()" class="flex-1 bg-green-600 text-white py-3 rounded-xl hover:bg-green-700 flex justify-center items-center gap-2 font-bold text-sm uppercase tracking-widest transition-all">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                            Ya Pagué
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // ==========================================
-        // LÓGICA ORIGINAL (INTACTA)
-        // ==========================================
-        const CONFIG = {
-            sheetUrl: 'https://script.google.com/macros/s/TU_SCRIPT_ID_AQUI/exec', // ← REEMPLAZAR
-            whatsapp: '3834565209',
-            products: [
-                { id: 1, name: 'Camiseta Clásica', price: 15000, img: 'assets/producto1.jpg' },
-                { id: 2, name: 'Camiseta Edición Limitada', price: 18000, img: 'assets/producto2.jpg' },
-                { id: 3, name: 'Camiseta Premium', price: 20000, img: 'assets/producto3.jpg' }
-            ]
+        // ==================== STATE ====================
+        let cart = [];
+        let selectedPayment = 'full';
+        
+        // Database of taken numbers per section (separated Mayor and Milicianos)
+        const takenNumbersDB = {
+            "Escuderos": [10, 20],
+            "Templarios": [7],
+            "Adalides": [],
+            "Herederas": [99],
+            "Caperucitas": [],
+            "Mayor": [],
+            "Milicianos": []
         };
 
-        let cart = JSON.parse(localStorage.getItem('rucaCart')) || [];
-        let paymentType = 'single';
+        const PRODUCT_PRICE = 15000;
 
-        // NUEVO: NÚMEROS OCUPADOS POR SECCIÓN
-        let occupiedNumbers = JSON.parse(localStorage.getItem('rucaOccupied')) || {
-            escuderos: [], templarios: [], adalides: [], herederas: [], caperucitas: [], mayor: [], milicianos: []
-        };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            renderProducts();
-            updateCartUI();
-            checkPendingPayment();
-        });
-
-        function renderProducts() {
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = CONFIG.products.map(p => `
-                <div class="product-card">
-                    <img src="${p.img}" alt="${p.name}" class="product-img" onerror="this.style.background='#eee'">
-                    <h4>${p.name}</h4>
-                    <p style="color: var(--light-text); margin: 5px 0;">$${p.price.toLocaleString()}</p>
-                    <button class="btn-buy" onclick="addToCart(${p.id})">Agregar al carrito</button>
-                </div>
-            `).join('');
+        // ==================== MODALS ====================
+        function openProductModal() {
+            document.getElementById('product-modal').classList.remove('hidden');
+            document.getElementById('cust-name').value = '';
+            document.getElementById('cust-lastname').value = '';
+            document.getElementById('section-select').value = '';
+            document.getElementById('number-input').value = '';
+            document.getElementById('custom-shirt-name').value = '';
+            document.getElementById('number-error').classList.add('hidden');
+            document.getElementById('add-to-cart-btn').disabled = false;
         }
 
-        function addToCart(id) {
-            const product = CONFIG.products.find(p => p.id === id);
-            const existing = cart.find(item => item.id === id);
-            if (existing) existing.qty++; else cart.push({ ...product, qty: 1 });
-            saveCart();
-            updateCartUI();
-            showToast();
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
         }
 
-        function saveCart() { localStorage.setItem('rucaCart', JSON.stringify(cart)); }
-
-        function updateCartUI() {
-            document.getElementById('cartCount').textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+        function toggleSizeChart() {
+            document.getElementById('size-chart-modal').classList.toggle('hidden');
         }
 
-        function openCart() {
-            const container = document.getElementById('cartItems');
-            if (cart.length === 0) container.innerHTML = '<p style="text-align:center; padding:20px;">El carrito está vacío</p>';
-            else container.innerHTML = cart.map(item => `
-                <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;">
-                    <span>${item.name} (x${item.qty})</span>
-                    <strong>$${(item.price * item.qty).toLocaleString()}</strong>
-                </div>
-            `).join('');
-            
-            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            document.getElementById('cartTotal').textContent = total.toLocaleString();
-            document.getElementById('cartModal').classList.add('show');
+        function toggleCart() {
+            const sidebar = document.getElementById('cart-sidebar');
+            sidebar.classList.toggle('translate-x-full');
         }
 
-        function openCheckout() {
-            closeModal('cartModal');
-            const total = paymentType === 'single' 
-                ? cart.reduce((sum, item) => sum + (item.price * item.qty), 0)
-                : Math.round(cart.reduce((sum, item) => sum + (item.price * item.qty), 0) / 2);
-            
-            document.getElementById('checkoutTotal').textContent = total.toLocaleString();
-            document.getElementById('checkoutModal').classList.add('show');
-            updateAvailableNumbers(); // NUEVO
+        function openCheckoutModal() {
+            toggleCart();
+            document.getElementById('checkout-modal').classList.remove('hidden');
+            updateTransferAmount();
         }
 
-        function selectPayment(el, type) {
-            document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('selected'));
-            el.classList.add('selected');
-            paymentType = type;
-            const total = paymentType === 'single' 
-                ? cart.reduce((sum, item) => sum + (item.price * item.qty), 0)
-                : Math.round(cart.reduce((sum, item) => sum + (item.price * item.qty), 0) / 2);
-            document.getElementById('checkoutTotal').textContent = total.toLocaleString();
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').classList.add('hidden');
         }
 
-        function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+        // ==================== PAYMENT ====================
+        function selectPayment(method) {
+            selectedPayment = method;
+            document.getElementById('payment-full').classList.toggle('selected', method === 'full');
+            document.getElementById('payment-installments').classList.toggle('selected', method === 'installments');
+            document.querySelector('input[name="payment-method"][value="' + method + '"]').checked = true;
+            updateTransferAmount();
+        }
+
+        function updateTransferAmount() {
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            const displayTotal = selectedPayment === 'installments' ? total / 2 : total;
+            const label = selectedPayment === 'installments' ? '1ra Cuota (50%)' : 'Total a Pagar';
+            document.getElementById('transfer-amount').innerHTML = `<span class="text-sm font-normal text-gray-500 block">${label}</span>$${displayTotal.toLocaleString('es-AR')}`;
+        }
 
         function copyAlias() {
-            navigator.clipboard.writeText('TU.ALIAS.AQUI');
-            alert('Alias copiado al portapapeles');
+            navigator.clipboard.writeText("TU.ALIAS.AQUI");
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = "✓ Copiado";
+            setTimeout(() => { btn.textContent = originalText; }, 2000);
         }
 
-        // ==========================================
-        // NUEVO: FUNCIONES AGREGADAS
-        // ==========================================
-        function updateAvailableNumbers() {
-            const section = document.getElementById('shirtSection').value;
-            const numberSelect = document.getElementById('shirtNumber');
-            const warning = document.getElementById('numberWarning');
-            
-            warning.classList.remove('show');
-            numberSelect.innerHTML = '<option value="">Seleccionar número</option>';
-            
+        // ==================== NUMBER VALIDATION ====================
+        function checkNumberAvailability() {
+            const numInput = document.getElementById('number-input');
+            if (numInput.value) validateNumberInput();
+        }
+
+        function validateNumberInput() {
+            const section = document.getElementById('section-select').value;
+            const num = parseInt(document.getElementById('number-input').value);
+            const errorMsg = document.getElementById('number-error');
+            const btn = document.getElementById('add-to-cart-btn');
+
             if (!section) {
-                numberSelect.innerHTML = '<option value="">Primero seleccioná una sección</option>';
+                errorMsg.textContent = "⚠️ Primero seleccioná una sección.";
+                errorMsg.classList.remove('hidden');
+                btn.disabled = true;
                 return;
             }
-            
-            const occupied = occupiedNumbers[section] || [];
-            for (let i = 1; i <= 99; i++) {
-                if (!occupied.includes(i)) {
-                    const opt = document.createElement('option');
-                    opt.value = i;
-                    opt.textContent = `N° ${i}`;
-                    numberSelect.appendChild(opt);
-                }
+
+            if (!num || num < 1 || num > 99) {
+                errorMsg.classList.add('hidden');
+                btn.disabled = false;
+                return;
+            }
+
+            const taken = takenNumbersDB[section] || [];
+            const inCart = cart.some(item => item.section === section && item.number === num);
+
+            if (taken.includes(num) || inCart) {
+                errorMsg.textContent = `⚠️ El número ${num} ya está ocupado en ${section}.`;
+                errorMsg.classList.remove('hidden');
+                btn.disabled = true;
+            } else {
+                errorMsg.classList.add('hidden');
+                btn.disabled = false;
             }
         }
 
-        function checkNumberAvailability() {
-            const section = document.getElementById('shirtSection').value;
-            const number = parseInt(document.getElementById('shirtNumber').value);
-            const warning = document.getElementById('numberWarning');
-            
-            if (section && number && occupiedNumbers[section].includes(number)) {
-                warning.classList.add('show');
-                return false;
-            }
-            warning.classList.remove('show');
-            return true;
-        }
+        // ==================== CART ====================
+        function addToCart() {
+            const name = document.getElementById('cust-name').value.trim();
+            const lastname = document.getElementById('cust-lastname').value.trim();
+            const size = document.getElementById('size-select').value;
+            const section = document.getElementById('section-select').value;
+            const number = document.getElementById('number-input').value;
+            const customName = document.getElementById('custom-shirt-name').value.trim().toUpperCase();
 
-        function markNumberAsOccupied(section, number) {
-            if (!occupiedNumbers[section]) occupiedNumbers[section] = [];
-            if (!occupiedNumbers[section].includes(number)) {
-                occupiedNumbers[section].push(number);
-                localStorage.setItem('rucaOccupied', JSON.stringify(occupiedNumbers));
-            }
-        }
+            if (!name || !lastname) { alert("Por favor ingresá tu nombre y apellido."); return; }
+            if (!section) { alert("Por favor seleccioná una sección."); return; }
+            if (!number) { alert("Por favor ingresá un número del 1 al 99."); return; }
 
-        // NUEVO: FINALIZAR COMPRA CON DATOS COMPLETOS + WHATSAPP + GOOGLE SHEETS
-        function finishPurchase() {
-            const name = document.getElementById('clientName').value.trim();
-            const surname = document.getElementById('clientSurname').value.trim();
-            const customName = document.getElementById('shirtCustomName').value.trim() || 'Sin personalización';
-            const section = document.getElementById('shirtSection').value;
-            const number = document.getElementById('shirtNumber').value;
-            
-            if (!name || !surname || !section || !number) {
-                return alert('Por favor completá nombre, apellido, sección y número de camiseta');
-            }
-            if (!checkNumberAvailability()) {
-                return alert('Este número ya está ocupado en esa sección. Elegí otro.');
-            }
+            const num = parseInt(number);
+            if (num < 1 || num > 99) { alert("El número debe ser entre 1 y 99."); return; }
 
-            const total = paymentType === 'single' ? cart.reduce((s, i) => s + i.price * i.qty, 0) : Math.round(cart.reduce((s, i) => s + i.price * i.qty, 0) / 2);
-            markNumberAsOccupied(section, parseInt(number));
-
-            // MENSAJE WHATSAPP ACTUALIZADO
-            let msg = `👕 *NUEVO PEDIDO - RUCA DEL VALLE*\n\n`;
-            cart.forEach(item => msg += `• ${item.name} x${item.qty} - $${(item.price * item.qty).toLocaleString()}\n`);
-            msg += `\n💳 Método: ${paymentType === 'single' ? '1 Pago' : '2 Pagos'}\n💰 Total: $${total.toLocaleString()}\n`;
-            msg += `👤 Cliente: ${name} ${surname}\n`;
-            msg += `✏️ Camiseta: ${customName}\n🏆 Sección: ${section}\n🔢 Número: ${number}\n`;
-            msg += `\n📎 *Adjunto comprobante de pago*`;
-
-            // ENVIAR A GOOGLE SHEETS (NUEVO)
-            const orderData = {
-                date: new Date().toISOString(),
-                customer: `${name} ${surname}`,
-                customName,
-                section,
-                number,
-                total,
-                paymentType,
-                cart: cart.map(i => `${i.name} x${i.qty}`).join(', '),
-                id: Date.now()
+            const item = {
+                id: Date.now(),
+                productName: "Camiseta Oficial Ruca del Valle",
+                price: PRODUCT_PRICE,
+                customer: `${name} ${lastname}`,
+                size, section, number: num,
+                customName: customName || name.toUpperCase()
             };
-            
-            fetch(CONFIG.sheetUrl, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderData)
-            }).catch(console.error);
 
-            // GUARDAR PARA RECORDATORIO SI ES 2 PAGOS
-            if (paymentType === 'installment') {
-                const nextPay = new Date(); nextPay.setDate(nextPay.getDate() + 30);
-                localStorage.setItem('rucaPending', JSON.stringify({
-                    amount: total, due: nextPay.toISOString(), client: `${name} ${surname}`
-                }));
-            }
-
-            // LIMPIAR Y REDIRIGIR
-            window.open(`https://wa.me/54${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
-            cart = []; saveCart(); updateCartUI(); closeModal('checkoutModal');
-            showToast('Pedido registrado. Enviá el comprobante por WhatsApp.');
-            
-            if (paymentType === 'installment') setTimeout(() => location.reload(), 1500);
+            cart.push(item);
+            renderCart();
+            showToast();
+            closeProductModal();
         }
 
-        // LÓGICA DE RECORDATORIO (ORIGINAL + GOOGLE SHEETS TRIGGER)
-        function checkPendingPayment() {
-            const pending = JSON.parse(localStorage.getItem('rucaPending'));
-            if (pending && new Date() >= new Date(pending.due)) {
-                document.getElementById('pendingAmount').textContent = pending.amount.toLocaleString();
-                document.getElementById('reminderBanner').classList.add('show');
-            }
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            renderCart();
         }
 
-        function paySecondInstallment() {
-            const pending = JSON.parse(localStorage.getItem('rucaPending'));
-            if (!pending) return;
-            alert(`Redirigiendo a pagar 2da cuota ($${pending.amount.toLocaleString()})...`);
-            localStorage.removeItem('rucaPending');
-            document.getElementById('reminderBanner').classList.remove('show');
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            const countBadge = document.getElementById('cart-count');
+            const totalEl = document.getElementById('cart-total');
+            const checkoutBtn = document.getElementById('checkout-btn');
+            let total = 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-600 mt-16">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-[#2A2A2A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        <p class="text-base font-medium text-gray-500">El carrito está vacío</p>
+                        <p class="text-xs mt-1 text-gray-600">Agregá tu camiseta para comenzar</p>
+                    </div>
+                `;
+                countBadge.classList.add('hidden');
+                checkoutBtn.disabled = true;
+                totalEl.textContent = '$0';
+                return;
+            }
+
+            countBadge.textContent = cart.length;
+            countBadge.classList.remove('hidden');
+            checkoutBtn.disabled = false;
+
+            container.innerHTML = '';
+            cart.forEach(item => {
+                total += item.price;
+                const div = document.createElement('div');
+                div.className = 'bg-black/30 border border-[#2A2A2A] rounded-xl p-4';
+                div.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-cinzel font-bold text-sm text-[#F5B731] truncate">${item.productName}</h4>
+                            <div class="mt-2 space-y-1">
+                                <p class="text-xs text-gray-400">👤 ${item.customer}</p>
+                                <p class="text-xs text-gray-400">📏 Talle: ${item.size} · 🛡️ ${item.section}</p>
+                                <p class="text-xs text-gray-400">🔢 Nº ${item.number} · ✍️ "${item.customName}"</p>
+                            </div>
+                            <p class="text-sm font-bold text-[#F5B731] mt-2">$${item.price.toLocaleString('es-AR')}</p>
+                        </div>
+                        <button onclick="removeFromCart(${item.id})" class="text-gray-600 hover:text-red-400 transition-colors ml-3 flex-shrink-0 p-1">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            totalEl.textContent = '$' + total.toLocaleString('es-AR');
         }
 
         function showToast() {
             const toast = document.getElementById('toast');
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => { toast.classList.add('translate-x-full'); }, 3000);
         }
 
-        window.onclick = e => { if (e.target.classList.contains('modal')) e.target.classList.remove('show'); };
+        // ==================== WHATSAPP ORDER ====================
+        function sendWhatsAppOrder() {
+            if (cart.length === 0) return;
+
+            let msg = "¡Hola Ruca del Valle! Quiero confirmar mi pedido:%0A%0A";
+            
+            cart.forEach((item, i) => {
+                msg += `*${i + 1}. ${item.productName}*%0A`;
+                msg += `   👤 Cliente: ${item.customer}%0A`;
+                msg += `   📏 Talle: ${item.size}%0A`;
+                msg += `   🛡️ Sección: ${item.section}%0A`;
+                msg += `   🔢 Número: ${item.number}%0A`;
+                msg += `   ✍️ Estampado: "${item.customName}"%0A`;
+                msg += `   💰 Precio: $${item.price.toLocaleString('es-AR')}%0A%0A`;
+            });
+
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            const method = selectedPayment === 'installments' ? '2 Pagos (Mitad ahora)' : 'Pago Total';
+            
+            msg += `--------------------------%0A`;
+            msg += ` *TOTAL: $${total.toLocaleString('es-AR')}*%0A`;
+            msg += `💳 Método: ${method}%0A`;
+            msg += `--------------------------%0A%0A`;
+            msg += `Adjunto el comprobante de transferencia a continuación.`;
+
+            window.open(`https://wa.me/3834565209?text=${msg}`, '_blank');
+        }
     </script>
 </body>
 </html>
+
