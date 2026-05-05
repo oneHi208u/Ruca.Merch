@@ -330,148 +330,187 @@
 
     <!-- JAVASCRIPT -->
     <script>
-        // ⚙️ CONFIGURACIÓN
-        const SHEET_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzW4_HUGEaZsn3ygnNVmsPrH1d57Zoryqe1AztyC28lQGsA2XYYCk_fXK_4dxE8XH5eEw/exec';
-        let occupiedNumbers = {}, cart = [], selectedPayment = 'full', selectedRating = 0;
-        const PRODUCT_PRICE = 35000;
+    // ==================== ESTADO GLOBAL ====================
+    let cart = [];
+    let selectedPayment = 'full';
+    const PRODUCT_PRICE = 35000;
 
-        // 🖼️ UI Helpers
-        function openProductModal() { document.getElementById('product-modal').classList.remove('hidden'); occupiedNumbers = {}; }
-        function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
-        function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('translate-x-full'); }
-        function openCheckoutModal() { toggleCart(); document.getElementById('checkout-modal').classList.remove('hidden'); updateTransferAmount(); }
-        function closeCheckoutModal() { document.getElementById('checkout-modal').classList.add('hidden'); }
-        function showToast(msg) { const t = document.getElementById('toast'); document.getElementById('toast-msg').textContent = msg; t.classList.remove('translate-x-full'); setTimeout(() => t.classList.add('translate-x-full'), 3000); }
-        function copyAlias() { navigator.clipboard.writeText("camisetas.rdv"); showToast("Alias copiado"); }
-        function toggleSizeChart() { document.getElementById('size-chart-modal').classList.toggle('hidden'); }
-        function toggleShirtView(v) {
-            const img = document.getElementById('shirt-image'), lbl = document.getElementById('shirt-view-label');
-            if(v==='frontal'){ img.src='img/camiseta-frontal.jpg'; lbl.textContent='VISTA FRONTAL'; }
-            else { img.src='img/camiseta-trasera.jpg'; lbl.textContent='VISTA TRASERA'; }
-        }
-        function selectPayment(m) {
-            selectedPayment = m;
-            document.getElementById('payment-full').classList.toggle('selected', m==='full');
-            document.getElementById('payment-installments').classList.toggle('selected', m==='installments');
-            document.querySelector(`input[name="payment-method"][value="${m}"]`).checked = true;
-            updateTransferAmount();
-        }
-        function updateTransferAmount() {
-            const t = cart.reduce((s,i)=>s+i.price,0);
-            const d = selectedPayment==='installments'?t/2:t;
-            document.getElementById('transfer-amount').textContent = `$${d.toLocaleString('es-AR')}`;
-        }
+    // ==================== FUNCIONES DEL CARRITO ====================
+    function toggleCart() {
+        const sidebar = document.getElementById('cart-sidebar');
+        sidebar.classList.toggle('translate-x-full');
+    }
 
-        // 🔢 Number Validation & Availability Check
-        async function checkAvailability(section) {
-            if(!section) return;
-            const btn = document.getElementById('add-to-cart-btn');
-            btn.disabled = true; btn.textContent = "Verificando...";
-            try {
-                const res = await fetch(`${SHEET_SCRIPT_URL}?action=availability&section=${section}`);
-                occupiedNumbers[section] = await res.json();
-                validateNumberInput();
-            } catch(e) { console.error(e); }
-            btn.disabled = false; btn.textContent = "Agregar al Carrito";
-        }
-        function validateNumberInput() {
-            const sec = document.getElementById('section-select').value, num = parseInt(document.getElementById('number-input').value);
-            const err = document.getElementById('number-error'), btn = document.getElementById('add-to-cart-btn');
-            if(!sec || !num) { err.classList.add('hidden'); btn.disabled=false; return; }
-            const used = (occupiedNumbers[sec]||[]).includes(num);
-            const inCart = cart.some(i=>i.section===sec && i.number===num);
-            if(used || inCart) { err.textContent=`⚠️ El ${num} ya está ocupado en ${sec}.`; err.classList.remove('hidden'); btn.disabled=true; }
-            else { err.classList.add('hidden'); btn.disabled=false; }
-        }
+    function addToCart() {
+        const name = document.getElementById('cust-name').value.trim();
+        const lastname = document.getElementById('cust-lastname').value.trim();
+        const size = document.getElementById('size-select').value;
+        const section = document.getElementById('section-select').value;
+        const number = document.getElementById('number-input').value;
+        const customName = document.getElementById('custom-shirt-name').value.trim().toUpperCase();
 
-        // 🛒 Cart Logic
-        function addToCart() {
-            const n=document.getElementById('cust-name').value.trim(), l=document.getElementById('cust-lastname').value.trim();
-            const s=document.getElementById('size-select').value, sec=document.getElementById('section-select').value;
-            const num=document.getElementById('number-input').value, cn=document.getElementById('custom-shirt-name').value.trim().toUpperCase();
-            if(!n||!l) return alert("Nombre y apellido obligatorios");
-            if(!sec) return alert("Seleccioná una sección");
-            if(!num) return alert("Ingresá un número");
-            const item = {id:Date.now(), product:"Camiseta Oficial Ruca del Valle", price:PRODUCT_PRICE, customer:`${n} ${l}`, email:document.getElementById('cust-email').value, size:s, section:sec, number:parseInt(num), customName:cn||n.toUpperCase()};
-            cart.push(item); renderCart(); showToast("¡Agregado al carrito!"); closeProductModal();
-        }
-        function removeFromCart(id) { cart=cart.filter(i=>i.id!==id); renderCart(); }
-        function renderCart() {
-            const c=document.getElementById('cart-items'), badge=document.getElementById('cart-count'), tot=document.getElementById('cart-total'), btn=document.getElementById('checkout-btn');
-            let t=0;
-            if(cart.length===0) { c.innerHTML='<div class="text-center text-gray-600 mt-16"><svg class="w-16 h-16 mx-auto mb-4 text-[#2A2A2A]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg><p class="text-base font-medium text-gray-500">El carrito está vacío</p><p class="text-xs mt-1 text-gray-600">Agregá tu camiseta para comenzar</p></div>'; badge.classList.add('hidden'); btn.disabled=true; }
-            else {
-                badge.textContent=cart.length; badge.classList.remove('hidden'); btn.disabled=false; c.innerHTML='';
-                cart.forEach(i=>{ t+=i.price; c.innerHTML+=`<div class="bg-black/30 border border-[#2A2A2A] rounded-xl p-4"><div class="flex justify-between items-start"><div class="flex-1 min-w-0"><h4 class="font-cinzel font-bold text-sm text-[#F5B731] truncate">${i.product}</h4><div class="mt-2 space-y-1"><p class="text-xs text-gray-400">👤 ${i.customer}</p><p class="text-xs text-gray-400">📏 Talle: ${i.size} · 🛡️ ${i.section}</p><p class="text-xs text-gray-400">🔢 Nº ${i.number} · ✍️ "${i.customName}"</p></div><p class="text-sm font-bold text-[#F5B731] mt-2">$${i.price.toLocaleString('es-AR')}</p></div><button onclick="removeFromCart(${i.id})" class="text-gray-600 hover:text-red-400 ml-3 p-1">🗑️</button></div></div>`; });
-            }
-            tot.textContent=`$${t.toLocaleString('es-AR')}`;
+        if (!name || !lastname) { alert("Por favor ingresá tu nombre y apellido."); return; }
+        if (!section) { alert("Por favor seleccioná una sección."); return; }
+        if (!number || number < 1 || number > 99) { alert("Ingresá un número válido entre 1 y 99."); return; }
+
+        const item = {
+            id: Date.now(),
+            productName: "Camiseta Oficial Ruca del Valle",
+            price: PRODUCT_PRICE,
+            customer: `${name} ${lastname}`,
+            size, section, number: parseInt(number),
+            customName: customName || name.toUpperCase()
+        };
+
+        cart.push(item);
+        renderCart();
+        showToast("¡Producto agregado al carrito!");
+        closeProductModal();
+    }
+
+    function removeFromCart(id) {
+        cart = cart.filter(item => item.id !== id);
+        renderCart();
+    }
+
+    function renderCart() {
+        const container = document.getElementById('cart-items');
+        const badge = document.getElementById('cart-count');
+        const totalEl = document.getElementById('cart-total');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        let total = 0;
+
+        if (cart.length === 0) {
+            container.innerHTML = `<div class="text-center text-gray-600 mt-16"><p class="text-base font-medium text-gray-500">El carrito está vacío</p><p class="text-xs mt-1 text-gray-600">Agregá tu camiseta para comenzar</p></div>`;
+            badge.classList.add('hidden');
+            checkoutBtn.disabled = true;
+            totalEl.textContent = '$0';
+            return;
         }
 
-        // 💳 Checkout & WhatsApp
-        async function sendWhatsAppOrder() {
-            if(cart.length===0) return;
-            showToast("Procesando pedido...");
-            
-            // Enviar cada item a Google Sheets
-            for(const item of cart) {
-                await fetch(SHEET_SCRIPT_URL, {
-                    method: 'POST', mode: 'no-cors',
-                    headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({...item, action:'purchase'})
-                });
-            }
+        badge.textContent = cart.length;
+        badge.classList.remove('hidden');
+        checkoutBtn.disabled = false;
+        container.innerHTML = '';
 
-            let msg = "¡Hola Ruca del Valle! Quiero confirmar mi pedido:%0A%0A";
-            cart.forEach((i,idx)=>{
-                msg+=`*${idx+1}. ${i.product}*%0A👤 ${i.customer}%0A📏 ${i.size} | 🛡️ ${i.section}%0A🔢 ${i.number} | ✍️ ${i.customName}%0A💰 $${i.price.toLocaleString('es-AR')}%0A%0A`;
-            });
-            const total = cart.reduce((s,i)=>s+i.price,0);
-            msg+=`--------------------------%0A💵 *TOTAL: $${total.toLocaleString('es-AR')}*%0A💳 Método: ${selectedPayment==='installments'?'2 Pagos (Mitad ahora)':'Pago Total'}%0A--------------------------%0A%0AAdjunto comprobante.`;
-            window.open(`https://wa.me/3834565209?text=${msg}`, '_blank');
-            cart=[]; renderCart(); closeCheckoutModal();
-        }
-
-        // ⭐ Reviews System
-        document.querySelectorAll('#star-selector span').forEach(s => {
-            s.addEventListener('click', function() {
-                selectedRating = parseInt(this.dataset.val);
-                document.querySelectorAll('#star-selector span').forEach((el, i) => {
-                    el.classList.toggle('active', i < selectedRating);
-                });
-            });
+        cart.forEach(item => {
+            total += item.price;
+            container.innerHTML += `
+                <div class="bg-black/30 border border-[#2A2A2A] rounded-xl p-4 mb-3">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-cinzel font-bold text-sm text-[#F5B731] truncate">${item.productName}</h4>
+                            <div class="mt-1 text-xs text-gray-400 space-y-0.5">
+                                <p>👤 ${item.customer}</p>
+                                <p>📏 Talle: ${item.size} · 🛡️ ${item.section}</p>
+                                <p>🔢 Nº ${item.number} · ✍️ "${item.customName}"</p>
+                            </div>
+                            <p class="text-sm font-bold text-[#F5B731] mt-2">$${item.price.toLocaleString('es-AR')}</p>
+                        </div>
+                        <button onclick="removeFromCart(${item.id})" class="text-gray-500 hover:text-red-400 p-1 text-lg leading-none">✕</button>
+                    </div>
+                </div>`;
         });
 
-        async function loadReviews() {
-            try {
-                const res = await fetch(`${SHEET_SCRIPT_URL}?action=reviews`);
-                const reviews = await res.json();
-                const container = document.getElementById('reviews-container');
-                container.innerHTML = reviews.length ? '' : '<p class="text-gray-500 text-center py-4">Sé el primero en opinar.</p>';
-                reviews.reverse().forEach(r => {
-                    const stars = '★'.repeat(r.rating) + '☆'.repeat(5-r.rating);
-                    const date = new Date(r.date).toLocaleDateString('es-AR');
-                    container.innerHTML += `<div class="bg-[#1A1A1A] p-4 rounded-lg border border-[#2A2A2A]"><div class="flex justify-between items-center mb-2"><span class="font-bold text-white">${r.name}</span><span class="text-[#F5B731] text-sm">${stars}</span></div><p class="text-gray-400 text-sm">${r.comment}</p><p class="text-gray-600 text-xs mt-2">${date}</p></div>`;
-                });
-            } catch(e){}
-        }
+        totalEl.textContent = `$${total.toLocaleString('es-AR')}`;
+    }
 
-        async function submitReview() {
-            const name = document.getElementById('review-name').value.trim();
-            const comment = document.getElementById('review-comment').value.trim();
-            if(!name || !selectedRating || !comment) return alert('Completá nombre, calificación y comentario.');
-            await fetch(SHEET_SCRIPT_URL, {
-                method: 'POST', mode: 'no-cors',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({action:'review', name, rating:selectedRating, comment})
-            });
-            showToast('¡Gracias! Tu opinión se publicará en breve.');
-            document.getElementById('review-name').value=''; document.getElementById('review-comment').value='';
-            selectedRating=0; document.querySelectorAll('#star-selector span').forEach(s=>s.classList.remove('active'));
-            loadReviews();
-        }
+    // ==================== MODALES Y UI ====================
+    function openProductModal() { document.getElementById('product-modal').classList.remove('hidden'); }
+    function closeProductModal() { document.getElementById('product-modal').classList.add('hidden'); }
+    function toggleSizeChart() { document.getElementById('size-chart-modal').classList.toggle('hidden'); }
 
-        // 🚀 Init
-        document.addEventListener('DOMContentLoaded', () => { loadReviews(); });
-    </script>
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-msg').textContent = msg;
+        toast.classList.remove('translate-x-full');
+        setTimeout(() => toast.classList.add('translate-x-full'), 3000);
+    }
+
+    // ==================== CHECKOUT Y PAGO ====================
+    function openCheckoutModal() {
+        toggleCart();
+        document.getElementById('checkout-modal').classList.remove('hidden');
+        updateTransferAmount();
+    }
+    function closeCheckoutModal() { document.getElementById('checkout-modal').classList.add('hidden'); }
+
+    function selectPayment(method) {
+        selectedPayment = method;
+        document.getElementById('payment-full').classList.toggle('selected', method === 'full');
+        document.getElementById('payment-installments').classList.toggle('selected', method === 'installments');
+        document.querySelector(`input[name="payment-method"][value="${method}"]`).checked = true;
+        updateTransferAmount();
+    }
+
+    function updateTransferAmount() {
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        const displayTotal = selectedPayment === 'installments' ? total / 2 : total;
+        const label = selectedPayment === 'installments' ? '1ra Cuota (50%)' : 'Total a Pagar';
+        document.getElementById('transfer-amount').innerHTML = `<span class="text-sm font-normal text-gray-500 block">${label}</span>$${displayTotal.toLocaleString('es-AR')}`;
+    }
+
+    function copyAlias() {
+        navigator.clipboard.writeText("camisetas.rdv");
+        showToast("Alias copiado al portapapeles");
+    }
+
+    function toggleShirtView(view) {
+        const img = document.getElementById('shirt-image');
+        const label = document.getElementById('shirt-view-label');
+        const btnF = document.getElementById('btn-frontal');
+        const btnT = document.getElementById('btn-trasera');
+        
+        if (view === 'frontal') {
+            img.src = 'img/camiseta-frontal.jpg';
+            label.textContent = 'VISTA FRONTAL';
+            btnF.classList.add('active', 'text-[#F5B731]'); btnF.classList.remove('text-gray-500');
+            btnT.classList.remove('active', 'text-[#F5B731]'); btnT.classList.add('text-gray-500');
+        } else {
+            img.src = 'img/camiseta-trasera.jpg';
+            label.textContent = 'VISTA TRASERA';
+            btnT.classList.add('active', 'text-[#F5B731]'); btnT.classList.remove('text-gray-500');
+            btnF.classList.remove('active', 'text-[#F5B731]'); btnF.classList.add('text-gray-500');
+        }
+    }
+
+    // ==================== WHATSAPP ORDER ====================
+    function sendWhatsAppOrder() {
+        if (cart.length === 0) return;
+        
+        let msg = "¡Hola Ruca del Valle! Quiero confirmar mi pedido:%0A%0A";
+        cart.forEach((item, i) => {
+            msg += `*${i + 1}. ${item.productName}*%0A`;
+            msg += `   👤 Cliente: ${item.customer}%0A`;
+            msg += `   📏 Talle: ${item.size}%0A`;
+            msg += `   🛡️ Sección: ${item.section}%0A`;
+            msg += `   🔢 Número: ${item.number}%0A`;
+            msg += `   ✍️ Estampado: "${item.customName}"%0A`;
+            msg += `   💰 Precio: $${item.price.toLocaleString('es-AR')}%0A%0A`;
+        });
+
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        const method = selectedPayment === 'installments' ? '2 Pagos (Mitad ahora)' : 'Pago Total';
+        msg += `--------------------------%0A💵 *TOTAL: $${total.toLocaleString('es-AR')}*%0A💳 Método: ${method}%0A--------------------------%0A%0AAdjunto comprobante.`;
+        
+        window.open(`https://wa.me/3834565209?text=${msg}`, '_blank');
+        cart = [];
+        renderCart();
+        closeCheckoutModal();
+    }
+
+    // ==================== INIT ====================
+    document.addEventListener('DOMContentLoaded', () => {
+        renderCart();
+        // Cerrar modales con ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeProductModal();
+                closeCheckoutModal();
+                document.getElementById('size-chart-modal').classList.add('hidden');
+            }
+        });
+    });
+</script>
 </body>
 </html>
