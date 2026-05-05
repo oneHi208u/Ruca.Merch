@@ -1,1 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Ruca del Valle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #0A0A0A; color: #FFF8E1; font-family: 'Inter', sans-serif; }
+        .font-cinzel { font-family: 'Cinzel', serif; }
+        .card { background: #1A1A1A; border: 1px solid #2A2A2A; }
+        .gold-text { color: #F5B731; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-10">
 
+    <!-- Login Screen -->
+    <div id="login-screen" class="w-full max-w-sm mt-20 p-6 card rounded-xl shadow-2xl text-center">
+        <h2 class="font-cinzel text-2xl font-bold gold-text mb-4">Admin Ruca del Valle</h2>
+        <input type="password" id="admin-pass" placeholder="Contraseña" class="w-full bg-[#1E1E1E] border border-[#3A3A3A] text-white px-4 py-3 rounded-lg mb-4 focus:outline-none focus:border-[#F5B731]">
+        <button onclick="checkLogin()" class="w-full bg-[#F5B731] text-black font-bold py-3 rounded-lg hover:bg-[#FFD54F] transition">Entrar</button>
+        <p id="login-error" class="text-red-400 text-sm mt-3 hidden">Contraseña incorrecta</p>
+    </div>
+
+    <!-- Dashboard (Hidden by default) -->
+    <div id="dashboard" class="hidden w-full max-w-5xl px-4">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="font-cinzel text-3xl font-bold gold-text">Panel de Control</h1>
+            <button onclick="location.reload()" class="text-sm text-gray-400 hover:text-white underline">Cerrar Sesión</button>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="card p-6 rounded-xl">
+                <p class="text-gray-400 text-sm uppercase tracking-wider">Ventas del Mes</p>
+                <p id="stat-month" class="text-3xl font-bold text-white mt-2">Cargando...</p>
+            </div>
+            <div class="card p-6 rounded-xl">
+                <p class="text-gray-400 text-sm uppercase tracking-wider">Total General</p>
+                <p id="stat-total" class="text-3xl font-bold text-white mt-2">Cargando...</p>
+            </div>
+            <div class="card p-6 rounded-xl">
+                <p class="text-gray-400 text-sm uppercase tracking-wider">Sección Top</p>
+                <p id="stat-top" class="text-3xl font-bold gold-text mt-2">Cargando...</p>
+            </div>
+        </div>
+
+        <!-- Pending Orders Table -->
+        <div class="card rounded-xl overflow-hidden">
+            <div class="p-6 border-b border-[#2A2A2A] flex justify-between items-center">
+                <h2 class="font-cinzel text-xl font-bold text-white">Pedidos Pendientes</h2>
+                <button onclick="loadData()" class="text-xs bg-[#2A2A2A] hover:bg-[#3A3A3A] px-3 py-1 rounded text-gray-300">Actualizar</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-[#121212] text-gray-400 uppercase text-xs">
+                        <tr>
+                            <th class="px-6 py-4">ID Pedido</th>
+                            <th class="px-6 py-4">Cliente</th>
+                            <th class="px-6 py-4">Producto</th>
+                            <th class="px-6 py-4">Total</th>
+                            <th class="px-6 py-4 text-right">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pending-table-body" class="divide-y divide-[#2A2A2A]">
+                        <tr><td colspan="5" class="px-6 py-10 text-center text-gray-500">Cargando pedidos...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_URL = 'https://script.google.com/macros/s/AKfycbwzWUX9RVNHu5kdeQjLJs0Mk3bVAPCEwq4pEGGOU8D9-DdKWAiom7GyesSvgN2G21oO/exec'; // <-- Usa la misma URL que en index.html
+        const PASSWORD = '12345'; // <--- CAMBIÁ TU CONTRASEÑA AQUÍ
+
+        function checkLogin() {
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === PASSWORD) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                loadData();
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+
+        async function loadData() {
+            try {
+                const res = await fetch(`${ADMIN_URL}?action=admin`);
+                const data = await res.json();
+
+                // Update Stats
+                document.getElementById('stat-month').textContent = `$${data.stats.monthSales.toLocaleString('es-AR')}`;
+                document.getElementById('stat-total').textContent = `$${data.stats.totalSales.toLocaleString('es-AR')}`;
+                document.getElementById('stat-top').textContent = data.stats.topSection;
+
+                // Update Table
+                const tbody = document.getElementById('pending-table-body');
+                tbody.innerHTML = '';
+
+                if (data.pending.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-10 text-center text-gray-500">¡No hay pedidos pendientes! 🎉</td></tr>';
+                } else {
+                    data.pending.forEach(order => {
+                        const tr = document.createElement('tr');
+                        tr.className = 'hover:bg-[#1E1E1E] transition';
+                        tr.innerHTML = `
+                            <td class="px-6 py-4 font-mono text-xs text-gray-400">${order.id}</td>
+                            <td class="px-6 py-4 text-white">${order.cliente}</td>
+                            <td class="px-6 py-4 text-gray-300">
+                                <div class="flex flex-col">
+                                    <span>${order.producto}</span>
+                                    <span class="text-xs text-gray-500">Talle: ${order.talle} | Sec: ${order.seccion} | Nº: ${order.numero}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 font-bold gold-text">$${order.total.toLocaleString('es-AR')}</td>
+                            <td class="px-6 py-4 text-right">
+                                <button onclick="markPaid('${order.id}')" class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 rounded transition">Marcar Pagado</button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch (e) {
+                console.error(e);
+                alert('Error cargando datos. Verificá tu conexión.');
+            }
+        }
+
+        async function markPaid(id) {
+            if(!confirm('¿Confirmar que recibiste el dinero de este pedido?')) return;
+            
+            // Llamada al script para cambiar estado
+            await fetch(ADMIN_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'updateStatus', id: id, newStatus: 'Pagado' })
+            });
+            
+            // Recargar tabla
+            loadData();
+        }
+    </script>
+</body>
+</html>
